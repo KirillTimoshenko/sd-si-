@@ -25,7 +25,7 @@ value varchar(50));
 
 create table nc_params(
 object_id int not null references nc_objects(object_id),
-attr_if int not null references nc_attributes(attr_id),
+attr_id int not null references nc_attributes(attr_id),
 list_value_id int references nc_list_values(list_value_id),
 value varchar(50));
 
