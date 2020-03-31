@@ -3,37 +3,43 @@ use ncHomeTask;
 show tables;
 
 create table nc_object_types(
-object_type_id int(6) unsigned auto_increment primary key,
-name varchar(50) not null,
-description varchar(200));
+	object_type_id int unsigned auto_increment primary key,
+	name varchar(50) not null,
+	description varchar(200));
 
 create table nc_objects(
-object_id int(6) unsigned auto_increment primary key,
-object_type_id int references nc_object_types(object_type_id),
-name varchar(50) not null,
-description varchar(50));
+	object_id int unsigned auto_increment primary key,
+	object_type_id int unsigned,
+	name varchar(50) not null,
+	description varchar(50),
+		foreign key (object_type_id) references nc_object_types(object_type_id));
 
 create table nc_attributes(
-attr_id int(6) unsigned auto_increment primary key,
-object_type_id int not null references nc_object_types(object_type_id),
-name varchar(50) not null,
-type int(6) not null);
+	attr_id int unsigned auto_increment primary key,
+	object_type_id int unsigned not null,
+	name varchar(50) not null,
+	type int not null,
+		foreign key (object_type_id) references nc_object_types(object_type_id));
 
 create table nc_list_values(
-list_value_id int(6) unsigned auto_increment primary key,
-value varchar(50));
+	list_value_id int unsigned auto_increment primary key,
+	value varchar(50));
 
 create table nc_params(
-object_id int not null references nc_objects(object_id),
-attr_id int not null references nc_attributes(attr_id),
-list_value_id int references nc_list_values(list_value_id),
-value varchar(50));
+	object_id int unsigned not null,
+	attr_id int unsigned not null,
+	list_value_id int unsigned,
+	value varchar(50),
+		foreign key (object_id) references nc_objects(object_id),
+        foreign key (attr_id) references nc_attributes(attr_id),
+        foreign key (list_value_id) references nc_list_values(list_value_id));
 
 create table nc_references(
-object_id int not null references nc_objects(object_id),
-attr_id int not null references nc_attributes(attr_id),
-reference int(6) not null);
-
+	object_id int unsigned not null,
+	attr_id int unsigned not null,
+	reference int not null,
+		foreign key (object_id) references nc_objects(object_id),
+        foreign key (attr_id) references nc_attributes(attr_id));
 
 insert into nc_object_types values(null, 'Internet Order Object Type', null);
 insert into nc_object_types values(null, 'Video Order Object Type', null);
