@@ -5,29 +5,44 @@ show tables;
 create table nc_object_types(
 	object_type_id int unsigned auto_increment primary key,
 	name varchar(50) not null,
+    parent_id int unsigned,
 	description varchar(200));
 
 create table nc_objects(
 	object_id int unsigned auto_increment primary key,
-	object_type_id int unsigned,
 	name varchar(50) not null,
-	description varchar(50),
+    object_type_id int unsigned,
+	description varchar(200),
+		foreign key (object_type_id) references nc_object_types(object_type_id));
+
+create table nc_attr_type_defs(
+	attr_type_def_id int unsigned auto_increment primary key,
+    type int not null,
+	object_type_id int unsigned,
+	description varchar(200),
 		foreign key (object_type_id) references nc_object_types(object_type_id));
 
 create table nc_attributes(
 	attr_id int unsigned auto_increment primary key,
-	object_type_id int unsigned not null,
 	name varchar(50) not null,
-	type int not null,
+    attr_type_def_id int unsigned,
+		foreign key (attr_type_def_id) references nc_attr_type_defs(attr_type_def_id));
+
+create table nc_attr_object_types(
+	attr_id int unsigned,
+    object_type_id int unsigned,
+		foreign key (attr_id) references nc_attributes(attr_id),
 		foreign key (object_type_id) references nc_object_types(object_type_id));
 
 create table nc_list_values(
 	list_value_id int unsigned auto_increment primary key,
-	value varchar(50));
+	value varchar(50) not null,
+    attr_type_def_id int unsigned,
+		foreign key (attr_type_def_id) references nc_attr_type_defs(attr_type_def_id));
 
 create table nc_params(
-	object_id int unsigned not null,
 	attr_id int unsigned not null,
+	object_id int unsigned not null,
 	list_value_id int unsigned,
 	value varchar(50),
 		foreign key (object_id) references nc_objects(object_id),
@@ -35,47 +50,57 @@ create table nc_params(
         foreign key (list_value_id) references nc_list_values(list_value_id));
 
 create table nc_references(
-	object_id int unsigned not null,
 	attr_id int unsigned not null,
-	reference int not null,
+	object_id int unsigned not null,
+	reference int unsigned not null,
 		foreign key (object_id) references nc_objects(object_id),
         foreign key (attr_id) references nc_attributes(attr_id));
 
-insert into nc_object_types values(null, 'Internet Order Object Type', null);
-insert into nc_object_types values(null, 'Video Order Object Type', null);
-insert into nc_object_types values(null, 'Mobile Order Object Type', null);
-insert into nc_object_types values(null, 'Abstract Order Object Type', 'Abstract object type for all product orders');
-insert into nc_object_types values(null, 'Internet Instance Object Type', null);
-insert into nc_object_types values(null, 'Video Instance Object Type', null);
-insert into nc_object_types values(null, 'Mobile Instance Object Type', null);
-insert into nc_object_types values(null, 'Abstract Instance Object Type', 'Abstract object type for all product instances');
-insert into nc_object_types values(null, 'Phone Number', null);
+insert into nc_object_types values(null, 'All', 0, 'Based Object Type');
+insert into nc_object_types values(null, 'Abstract Order Object Type', 1, 'Abstract object type for all product orders');
+insert into nc_object_types values(null, 'Abstract Instance Object Type', 1, 'Abstract object type for all product instances');
+insert into nc_object_types values(null, 'Internet Order Object Type', 2, null);
+insert into nc_object_types values(null, 'Video Order Object Type', 2, null);
+insert into nc_object_types values(null, 'Mobile Order Object Type', 2, null);
+insert into nc_object_types values(null, 'Internet Instance Object Type', 3, null);
+insert into nc_object_types values(null, 'Video Instance Object Type', 3, null);
+insert into nc_object_types values(null, 'Mobile Instance Object Type', 3, null);
+insert into nc_object_types values(null, 'Phone Number', 1, 'Phone Number Оbject Type');
 
-insert into nc_objects values(null, 1, 'Internet Order #1', null);
-insert into nc_objects values(null, 2, 'Video Order #1', null);
-insert into nc_objects values(null, 2, 'Video Order #2', null);
-insert into nc_objects values(null, 1, 'Internet Order #2', null);
-insert into nc_objects values(null, 3, 'Mobile Order #1', null);
-insert into nc_objects values(null, 9, '07454343676', 'Number in the system');
+insert into nc_attr_type_defs values(null, 0, null, 'For any Text attribute');
+insert into nc_attr_type_defs values(null, 2, null, 'For any Number attribute');
+insert into nc_attr_type_defs values(null, 3, null, 'For any Decimal attribute');
+insert into nc_attr_type_defs values(null, 4, null, 'For any Date attribute');
+insert into nc_attr_type_defs values(null, 6, null, 'Access Type Values');
+insert into nc_attr_type_defs values(null, 6, null, 'Service Type Values');
+insert into nc_attr_type_defs values(null, 6, null, 'Order Status Values');
+insert into nc_attr_type_defs values(null, 9, 10, 'For any Reference to Phone Number OT');
 
-insert into nc_attributes values(null, 4, 'Due Date', 4);
-insert into nc_attributes values(null, 3, 'Phone Number', 9);
-insert into nc_attributes values(null, 1, 'Access Type', 6);
-insert into nc_attributes values(null, 1, 'Download Speed', 0);
-insert into nc_attributes values(null, 3, 'Service Type', 6);
-insert into nc_attributes values(null, 2, 'Suspend Reason', 0);
+insert into nc_attributes values(null, 'Due Date', 4);
+insert into nc_attributes values(null, 'Phone Number', 8);
+insert into nc_attributes values(null, 'Access Type', 5);
+insert into nc_attributes values(null, 'Download Speed', 1);
+insert into nc_attributes values(null, 'Service Type', 6);
+insert into nc_attributes values(null, 'Suspend Reason', 1);
+insert into nc_attributes values(null, 'Activation Period', 2);
+insert into nc_attributes values(null, 'Product Price', 3);
+insert into nc_attributes values(null, 'Order Status', 7);
 
-insert into nc_list_values values(null, 'XDSL');
-insert into nc_list_values values(null, 'GPON');
-insert into nc_list_values values(null, 'Postpaid');
-insert into nc_list_values values(null, 'Prepaid');
+insert into nc_list_values values(null, 'XDSL', 5);
+insert into nc_list_values values(null, 'GPON', 5);
+insert into nc_list_values values(null, 'Postpaid', 6);
+insert into nc_list_values values(null, 'Prepaid', 6);
+insert into nc_list_values values(null, 'Entering', 7);
+insert into nc_list_values values(null, 'Completed', 7);
+insert into nc_list_values values(null, 'Cancelled', 7);
+insert into nc_list_values values(null, 'Processing', 7);
 
-insert into nc_params values(1, 3, 2, null);
-insert into nc_params values(1, 4, null, '100 Mbps');
-insert into nc_params values(2, 6, null, 'Device Stolen');
-insert into nc_params values(3, 6, null, 'Tariff Change');
-insert into nc_params values(4, 3, 1, null);
-insert into nc_params values(4, 4, null, '500 Mbps');
-insert into nc_params values(5, 5, 3, null);
-
-insert into nc_references values(5, 2, 6);
+insert into nc_attr_object_types values(1, 2);
+insert into nc_attr_object_types values(2, 6);
+insert into nc_attr_object_types values(3, 4);
+insert into nc_attr_object_types values(4, 4);
+insert into nc_attr_object_types values(5, 6);
+insert into nc_attr_object_types values(6, 5);
+insert into nc_attr_object_types values(7, 2);
+insert into nc_attr_object_types values(8, 2);
+insert into nc_attr_object_types values(9, 2);
