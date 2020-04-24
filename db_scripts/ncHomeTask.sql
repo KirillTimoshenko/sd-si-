@@ -5,7 +5,7 @@ show tables;
 create table nc_object_types(
 	object_type_id int unsigned auto_increment primary key,
 	name varchar(50) not null,
-    parent_id int unsigned,
+    parent_id int unsigned not null,
 	description varchar(200));
 
 create table nc_objects(
@@ -56,6 +56,10 @@ create table nc_references(
 		foreign key (object_id) references nc_objects(object_id),
         foreign key (attr_id) references nc_attributes(attr_id));
 
+create table nc_id_keeper(
+	id int unsigned not null);
+insert into nc_id_keeper values(12);
+
 insert into nc_object_types values(null, 'All', 0, 'Based Object Type');
 insert into nc_object_types values(null, 'Abstract Order Object Type', 1, 'Abstract object type for all product orders');
 insert into nc_object_types values(null, 'Abstract Instance Object Type', 1, 'Abstract object type for all product instances');
@@ -75,6 +79,7 @@ insert into nc_attr_type_defs values(null, 6, null, 'Access Type Values');
 insert into nc_attr_type_defs values(null, 6, null, 'Service Type Values');
 insert into nc_attr_type_defs values(null, 6, null, 'Order Status Values');
 insert into nc_attr_type_defs values(null, 9, 10, 'For any Reference to Phone Number OT');
+insert into nc_attr_type_defs values(null, 6, null, 'Order Aim Values');
 
 insert into nc_attributes values(null, 'Due Date', 4);
 insert into nc_attributes values(null, 'Phone Number', 8);
@@ -85,6 +90,7 @@ insert into nc_attributes values(null, 'Suspend Reason', 1);
 insert into nc_attributes values(null, 'Activation Period', 2);
 insert into nc_attributes values(null, 'Product Price', 3);
 insert into nc_attributes values(null, 'Order Status', 7);
+insert into nc_attributes values(null, 'Order Aim', 9);
 
 insert into nc_list_values values(null, 'XDSL', 5);
 insert into nc_list_values values(null, 'GPON', 5);
@@ -94,6 +100,9 @@ insert into nc_list_values values(null, 'Entering', 7);
 insert into nc_list_values values(null, 'Completed', 7);
 insert into nc_list_values values(null, 'Cancelled', 7);
 insert into nc_list_values values(null, 'Processing', 7);
+insert into nc_list_values values(null, 'New', 9);
+insert into nc_list_values values(null, 'Modify', 9);
+insert into nc_list_values values(null, 'Disconnect', 9);
 
 insert into nc_attr_object_types values(1, 2);
 insert into nc_attr_object_types values(2, 6);
